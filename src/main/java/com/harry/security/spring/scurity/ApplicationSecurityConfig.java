@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -18,6 +19,7 @@ import static com.harry.security.spring.scurity.ApplicationUserPermission.*;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
 
     private final PasswordEncoder passwordEncoder;
@@ -34,10 +36,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
             .authorizeRequests()
             .antMatchers("/","index","/css/*","/js/*").permitAll()
             .antMatchers("/api/**").hasRole(STUDENT.name()) // Apakah Role nya STUDENT
-            .antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission()) // Apakah memiliki otoritas COURSE WRITE
-            .antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission()) // Apakah memiliki otoritas COURSE WRITE
-            .antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission()) // Apakah memiliki otoritas COURSE WRITE
-            .antMatchers("/management/api/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name()) // Jika DIPINDAH URUTANYA keatas Maka antMatcher Method POST, PUT, DELETE akan diabaikan dan Juga karena ini method terakhir yang di check Maka kita tidak perlu memberikan "HttpMethod.GET"
+            // .antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission()) // Apakah memiliki otoritas COURSE WRITE
+            // .antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission()) // Apakah memiliki otoritas COURSE WRITE
+            // .antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission()) // Apakah memiliki otoritas COURSE WRITE
+            // .antMatchers("/management/api/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name()) // Jika DIPINDAH URUTANYA keatas Maka antMatcher Method POST, PUT, DELETE akan diabaikan dan Juga karena ini method terakhir yang di check Maka kita tidak perlu memberikan "HttpMethod.GET"
             .anyRequest()
             .authenticated()
             .and()

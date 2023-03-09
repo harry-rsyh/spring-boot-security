@@ -3,6 +3,7 @@ package com.harry.security.spring.student;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,22 +23,28 @@ public class StudentManagementController {
         new Student(3, "Anna Smith")
     );
     
+    // Pre Authorize sama dengan passing config antMatcher di http.antMatchers(... , ...).hasXXX
+    // hasRole("ROLE_") hasAnyRole("ROLE_") hasAuthority("ROLE_") hasAnyAuthority("ROLE_")
     @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_ADMINTRAINEE')")
     public List<Student> getAllStudents(){
         return STUDENTS;
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('student:write')")
     public void registerNewStudent(@RequestBody Student student){
         System.out.println(student);
     }
 
     @DeleteMapping(path = "{studentId}")
+    @PreAuthorize("hasAuthority('student:write')")
     public void deleteNewStudent(@PathVariable(name = "studentId") Integer studentId){
         System.out.println(studentId);
     }
 
     @PutMapping(path = "{studentId}")
+    @PreAuthorize("hasAuthority('student:write')")
     public void updateNewStudent(@PathVariable("studentId") Integer studentId, @RequestBody Student student){
         System.out.println(String.format("%s %s", studentId, student));
     }
