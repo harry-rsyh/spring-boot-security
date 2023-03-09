@@ -30,21 +30,18 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Kapan CSRF bisa di nyalakan?
-    // Rekomendasi dinyalakan jika proses di jalankan di browser oleh pengguna normal
-    // Jika hanya sekedar membuat service non browser, sebaiknya di matikan saja
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            .and()
+            .csrf().disable()
             .authorizeRequests()
             .antMatchers("/","index","/css/*","/js/*").permitAll()
             .antMatchers("/api/**").hasRole(STUDENT.name()) // Apakah Role nya STUDENT
             .anyRequest()
             .authenticated()
             .and()
-            .httpBasic();
+            .formLogin()
+            .loginPage("/login").permitAll(); // akan diarahkan sesuai Template Controller (menggunakan thymeleaf), jgn lupa di permitAll untuk semua user
     }
     
     @Override
