@@ -45,12 +45,15 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
             .authenticated()
             .and()
             .formLogin()
-            .loginPage("/login").permitAll() // akan diarahkan sesuai Template Controller (menggunakan thymeleaf), jgn lupa di permitAll untuk semua user
-            .defaultSuccessUrl("/courses", true) // ketika login success maka halaman pertama yang akan diaksess
+                .loginPage("/login").permitAll() // akan diarahkan sesuai Template Controller (menggunakan thymeleaf), jgn lupa di permitAll untuk semua user
+                .defaultSuccessUrl("/courses", true) // ketika login success maka halaman pertama yang akan diaksess
+                .passwordParameter("password") // Mengganti name di html form login name="..."
+                .usernameParameter("username") // Mengganti name di html form login name="..."
             .and()
             .rememberMe() // default 2 minggu
                 .tokenValiditySeconds((int)TimeUnit.DAYS.toSeconds(21)) // Waktu valid token bisa digunakan
                 .key("somethingsecure") // key token
+                .rememberMeParameter("remember-me") // Mengganti name di html form login name="..."
             .and()
             .logout() // Customize Logout
                 .logoutUrl("/logout")
