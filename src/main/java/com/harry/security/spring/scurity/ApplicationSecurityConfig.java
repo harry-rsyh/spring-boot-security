@@ -64,34 +64,4 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
                 .logoutSuccessUrl("/login"); // ketika logout success jangan lupa arahkan kembali ke login url
     }
     
-    @Override
-    @Bean
-    protected UserDetailsService userDetailsService() {
-        UserDetails annaSmithUser = User.builder()
-            .username("annasmith")
-            .password(passwordEncoder.encode("password"))
-            // .roles(STUDENT.name())
-            .authorities(STUDENT.getGrantedAuthorities())
-            .build();
-
-        UserDetails lindaUser = User.builder()
-            .username("linda")
-            .password(passwordEncoder.encode("password"))
-            // .roles(ADMIN.name())
-            .authorities(ADMIN.getGrantedAuthorities())
-            .build();
-
-        UserDetails tomUser = User.builder()
-            .username("tom")
-            .password(passwordEncoder.encode("password"))
-            // .roles(ADMINTRAINEE.name())
-            .authorities(ADMINTRAINEE.getGrantedAuthorities())
-            .build();
-        
-        return new InMemoryUserDetailsManager(
-            annaSmithUser,
-            lindaUser,
-            tomUser
-        );
-    }
 }
