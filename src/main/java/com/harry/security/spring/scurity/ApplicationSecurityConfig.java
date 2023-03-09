@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import static com.harry.security.spring.scurity.ApplicationUserRole.*;
 import static com.harry.security.spring.scurity.ApplicationUserPermission.*;
@@ -29,17 +30,17 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
         this.passwordEncoder = passwordEncoder;
     }
 
+    // Kapan CSRF bisa di nyalakan?
+    // Rekomendasi dinyalakan jika proses di jalankan di browser oleh pengguna normal
+    // Jika hanya sekedar membuat service non browser, sebaiknya di matikan saja
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .csrf().disable() // TODO: Next Learn
+            .csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+            .and()
             .authorizeRequests()
             .antMatchers("/","index","/css/*","/js/*").permitAll()
             .antMatchers("/api/**").hasRole(STUDENT.name()) // Apakah Role nya STUDENT
-            // .antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission()) // Apakah memiliki otoritas COURSE WRITE
-            // .antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission()) // Apakah memiliki otoritas COURSE WRITE
-            // .antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission()) // Apakah memiliki otoritas COURSE WRITE
-            // .antMatchers("/management/api/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name()) // Jika DIPINDAH URUTANYA keatas Maka antMatcher Method POST, PUT, DELETE akan diabaikan dan Juga karena ini method terakhir yang di check Maka kita tidak perlu memberikan "HttpMethod.GET"
             .anyRequest()
             .authenticated()
             .and()
