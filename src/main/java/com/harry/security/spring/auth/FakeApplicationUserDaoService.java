@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.google.common.collect.Lists;
 
-@Repository("fake")
+@Repository("fake") // nama bean dari fake database yang akan di gunakan
 public class FakeApplicationUserDaoService implements ApplicationUserDao{
 
     private final PasswordEncoder passwordEncoder;
