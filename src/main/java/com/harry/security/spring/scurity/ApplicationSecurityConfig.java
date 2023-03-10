@@ -2,7 +2,7 @@ package com.harry.security.spring.scurity;
 
 import static com.harry.security.spring.scurity.ApplicationUserRole.STUDENT;
 
-import java.util.concurrent.TimeUnit;
+import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,11 +15,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.harry.security.spring.auth.ApplicationUserService;
-import com.harry.security.spring.jwt.JwtUsernameAndPasswordAuthenticationFilter;
+import com.harry.security.spring.jwt.JwtConfig;
 import com.harry.security.spring.jwt.JwtTokenVerifier;
+import com.harry.security.spring.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -28,11 +28,14 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
 
     private final PasswordEncoder passwordEncoder;
     private final ApplicationUserService applicationUserService;
+    private final SecretKey secretKey;
+    private final JwtConfig jwtConfig;
     
-    @Autowired
-    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder, ApplicationUserService applicationUserService) {
+    public ApplicationSecurityConfig(PasswordEncoder passwordEncoder, ApplicationUserService applicationUserService, SecretKey secretKey, JwtConfig jwtConfig) {
         this.passwordEncoder = passwordEncoder;
         this.applicationUserService = applicationUserService;
+        this.secretKey = secretKey;
+        this.jwtConfig = jwtConfig;
     }
 
     @Override
@@ -42,8 +45,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
-            .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager())) // Melakukan Filter sebelum lanjutkan data, ingat urutan posisi antMatcher berpengaruh
-            .addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class) // Filter data dengan memverifikasi token
+            .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey)) // Melakukan Filter sebelum lanjutkan data, ingat urutan posisi antMatcher berpengaruh
+            .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class) // Filter data dengan memverifikasi token
             .authorizeRequests()
             .antMatchers("/","index","/css/*","/js/*").permitAll()
             .antMatchers("/api/**").hasRole(STUDENT.name()) // Apakah Role nya STUDENT
