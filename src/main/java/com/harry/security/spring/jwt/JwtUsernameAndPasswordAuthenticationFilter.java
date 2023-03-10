@@ -56,7 +56,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
             Authentication authResult) throws IOException, ServletException {
                 
-        String key = "Loremipsumdolorsitametconsecteturadipisi";
+        String secretKey = "Loremipsumdolorsitametconsecteturadipisi";
 
         // Generate token
         String token  = Jwts.builder()
@@ -64,7 +64,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                         .claim("authorities", authResult.getAuthorities()) // isi dari body, Setup isi body/claim dari Payload JWT saat ini dinamai "authorities"
                         .setIssuedAt(new Date())
                         .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(2))) // expire token
-                        .signWith(Keys.hmacShaKeyFor(key.getBytes())) // Signatur dari token
+                        .signWith(Keys.hmacShaKeyFor(secretKey.getBytes())) // Signatur dari token
                         .compact();
                         
         response.addHeader("Authorization", "Bearer "+token); // Set Header

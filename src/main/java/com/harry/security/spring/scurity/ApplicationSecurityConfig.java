@@ -19,6 +19,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.harry.security.spring.auth.ApplicationUserService;
 import com.harry.security.spring.jwt.JwtUsernameAndPasswordAuthenticationFilter;
+import com.harry.security.spring.jwt.JwtTokenVerifier;
 
 @Configuration
 @EnableWebSecurity
@@ -42,6 +43,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter{
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager())) // Melakukan Filter sebelum lanjutkan data, ingat urutan posisi antMatcher berpengaruh
+            .addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class) // Filter data dengan memverifikasi token
             .authorizeRequests()
             .antMatchers("/","index","/css/*","/js/*").permitAll()
             .antMatchers("/api/**").hasRole(STUDENT.name()) // Apakah Role nya STUDENT
