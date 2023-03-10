@@ -61,7 +61,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
         // Generate token
         String token  = Jwts.builder()
                         .setSubject(authResult.getName()) // isi dari subject
-                        .claim("authorities", authResult.getAuthorities()) // isi dari body, Setup isi dari Payload JWT 
+                        .claim("authorities", authResult.getAuthorities()) // isi dari body, Setup isi body/claim dari Payload JWT saat ini dinamai "authorities"
                         .setIssuedAt(new Date())
                         .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusWeeks(2))) // expire token
                         .signWith(Keys.hmacShaKeyFor(key.getBytes())) // Signatur dari token
